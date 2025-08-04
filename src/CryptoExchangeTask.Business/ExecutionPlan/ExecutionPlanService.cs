@@ -28,6 +28,8 @@ internal sealed class ExecutionPlanService : IExecutionPlanService
         decimal requestedAmount,
         OrderType orderType)
     {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(requestedAmount, nameof(requestedAmount));
+
         var exchanges = await _exchangeRepository.FetchAllExchangesAsync();
 
         var executionPlanCalculator = _executionPlanCalculatorFactory.Create(orderType);

@@ -32,7 +32,6 @@ app.MapGet("/execution-plan", async (
         IExecutionPlanService executionPlanService,
         IValidator<ExecutionPlanRequest> validator) =>
     {
-        // ToDo: Add Swagger documentation
         await validator.ValidateAndThrowAsync(request);
 
         var createdExecutionPlan = await executionPlanService.Create(request.Amount, MapOrderType(request.OrderType));

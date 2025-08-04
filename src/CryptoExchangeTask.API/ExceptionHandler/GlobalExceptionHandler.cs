@@ -22,7 +22,8 @@ public class GlobalExceptionHandler : IExceptionHandler
         var problemDetails = new ProblemDetails
         {
             Status = StatusCodes.Status500InternalServerError,
-            Title = "An error occurred while processing your request"
+            Title = "An error occurred while processing your request",
+            Detail = exception.Message
         };
         await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken: cancellationToken);
 

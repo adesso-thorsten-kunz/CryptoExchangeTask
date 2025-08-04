@@ -28,6 +28,8 @@ internal abstract class ExecutionPlanCalculatorBase : IExecutionPlanCalculator
         Dictionary<string, decimal> availableFundsByExchangeId,
         IReadOnlyCollection<OrderBookEntry> orderBookEntries)
     {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(requestedAmount, nameof(requestedAmount));
+
         decimal alreadyPlannedAmount = 0;
 
         List<ExecutionPlanEntry> executionPlanEntries = [];
