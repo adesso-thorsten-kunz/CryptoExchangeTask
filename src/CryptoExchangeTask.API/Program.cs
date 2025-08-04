@@ -1,5 +1,6 @@
-using CryptoExchangeTask.API;
 using CryptoExchangeTask.API.Contracts;
+using CryptoExchangeTask.API.ExceptionHandler;
+using CryptoExchangeTask.API.Validator;
 using CryptoExchangeTask.Business.ExecutionPlan;
 using CryptoExchangeTask.Business.ExecutionPlan.Types;
 using CryptoExchangeTask.Business.Extensions;
@@ -11,6 +12,11 @@ builder.Services.AddBusinessServices();
 builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddConsole());
 builder.Services.AddValidatorsFromAssemblyContaining<ExecutionPlanRequestValidator>();
 
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<ValidationExceptionHandler>(); 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -19,33 +25,19 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.UseExceptionHandler();
+
 app.MapGet("/execution-plan", async (
         [AsParameters] ExecutionPlanRequest request, 
         IExecutionPlanService executionPlanService,
         IValidator<ExecutionPlanRequest> validator) =>
     {
         // ToDo: Add Swagger documentation
+        await validator.ValidateAndThrowAsync(request);
 
-        var validationResult = await validator.ValidateAsync(request);
-        if (!validationResult.IsValid)
-        {
-            return Results.Problem(
-                title: "Validation failed",
-                detail: "One or more validation errors occurred.",
-                statusCode: 400,
-                extensions: new Dictionary<string, object?>
-                {
-                    ["errors"] = validationResult.Errors.Select(e => new
-                    {
-                        e.PropertyName,
-                        e.ErrorMessage
-                    })
-                });
-        }
+        var createdExecutionPlan = await executionPlanService.Create(request.Amount, MapOrderType(request.OrderType));
 
-        var executionPlan = await executionPlanService.Create(request.Amount, MapOrderType(request.OrderType));
-
-        return Results.Ok(MapToResponse(executionPlan));
+        return Results.Ok(MapToResponse(createdExecutionPlan));
 
         CryptoExchangeTask.Business.Repository.Types.OrderType MapOrderType(OrderType orderType)
         {
@@ -73,4 +65,3 @@ app.MapGet("/execution-plan", async (
 .WithOpenApi();
 
 app.Run();
-

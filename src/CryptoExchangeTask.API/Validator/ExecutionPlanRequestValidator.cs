@@ -1,7 +1,7 @@
 using CryptoExchangeTask.API.Contracts;
 using FluentValidation;
 
-namespace CryptoExchangeTask.API;
+namespace CryptoExchangeTask.API.Validator;
 
 public class ExecutionPlanRequestValidator : AbstractValidator<ExecutionPlanRequest>
 {
