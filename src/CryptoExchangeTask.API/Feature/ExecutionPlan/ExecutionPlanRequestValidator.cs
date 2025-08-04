@@ -1,15 +1,13 @@
-using CryptoExchangeTask.API.Contracts;
+using CryptoExchangeTask.API.Contracts.ExecutionPlan;
 using FluentValidation;
 
-namespace CryptoExchangeTask.API.Validator;
+namespace CryptoExchangeTask.API.Feature.ExecutionPlan;
 
 public class ExecutionPlanRequestValidator : AbstractValidator<ExecutionPlanRequest>
 {
     public ExecutionPlanRequestValidator()
     {
         RuleFor(x => x.Amount).GreaterThan(0);
-        RuleFor(x => x.OrderType)
-            .IsInEnum()
-            .WithMessage("Invalid OrderType");
+        RuleFor(x => x.OrderType).IsInEnum();
     }
 }

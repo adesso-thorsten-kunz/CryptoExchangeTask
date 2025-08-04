@@ -1,4 +1,4 @@
-﻿namespace CryptoExchangeTask.API.Contracts;
+﻿namespace CryptoExchangeTask.API.Contracts.ExecutionPlan;
 
 public record ExecutionPlanResponse
 {
