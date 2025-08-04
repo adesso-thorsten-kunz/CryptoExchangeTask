@@ -33,7 +33,7 @@ internal sealed class ExecutionPlanService : IExecutionPlanService
         var executionPlanCalculator = _executionPlanCalculatorFactory.Create(orderType);
 
         var executionPlanEntries = executionPlanCalculator.Calculate(requestedAmount, exchanges);
-
+        
         return Types.ExecutionPlan.Create(executionPlanEntries);
     }
 }

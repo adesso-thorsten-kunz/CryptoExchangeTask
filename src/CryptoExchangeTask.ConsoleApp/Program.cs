@@ -46,7 +46,7 @@ void PrintResult(decimal requestedAmount1, OrderType orderType1, ExecutionPlan e
     Console.WriteLine();
 
     Console.WriteLine("Created execution Plan:");
-    Console.WriteLine($"Total count of orders: '{executionPlan1.Orders.Count}'");
+    Console.WriteLine($"Total count of orders: '{executionPlan1.TotalOrders}'");
     Console.WriteLine($"Total price in EUR: '{executionPlan1.TotalPrice}'");
     Console.WriteLine($"Total amount in crypto: '{executionPlan1.TotalAmount}'");
     Console.WriteLine("Orders:");

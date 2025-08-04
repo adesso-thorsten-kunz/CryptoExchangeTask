@@ -1,42 +1,41 @@
+using CryptoExchangeTask.API.Contracts;
+using CryptoExchangeTask.Business.ExecutionPlan;
+using CryptoExchangeTask.Business.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddBusinessServices();
+builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddConsole());
+
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.MapGet("/execution-plan", async ([AsParameters] ExecutionPlanRequest request, IExecutionPlanService executionPlanService) =>
+    {
+        if (!Enum.IsDefined(typeof(OrderType), request.OrderType))
+            return Results.BadRequest("Invalid OrderType");
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
+        var executionPlan = await executionPlanService.Create(request.Amount, MapOrderType(request.OrderType));
+
+        return Results.Ok(executionPlan);
+
+        CryptoExchangeTask.Business.Repository.Types.OrderType MapOrderType(OrderType orderType)
+        {
+            return orderType switch
+            {
+                OrderType.Buy => CryptoExchangeTask.Business.Repository.Types.OrderType.Buy,
+                OrderType.Sell => CryptoExchangeTask.Business.Repository.Types.OrderType.Sell,
+                _ => throw new ArgumentOutOfRangeException(nameof(orderType), orderType, null)
+            };
+        }
+    })
+.WithName("GetExecutionPlan")
 .WithOpenApi();
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

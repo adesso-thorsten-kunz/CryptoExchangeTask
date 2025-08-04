@@ -1,4 +1,5 @@
 ﻿using CryptoExchangeTask.Business.Repository.Types;
+using System.Reflection;
 
 namespace CryptoExchangeTask.Business.Repository;
 
@@ -18,7 +19,8 @@ internal sealed class JsonExchangeRepository : IExchangeRepository
 
     public async Task<IReadOnlyCollection<Exchange>> FetchAllExchangesAsync()
     {
-        var filePaths = Directory.GetFiles(Path.Combine("Repository", "Data"), "exchange-*.json");
+        var assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        var filePaths = Directory.GetFiles(Path.Combine(assemblyPath, "Repository", "Data"), "exchange-*.json");
 
         var exchanges = new List<Exchange>(filePaths.Length);
         foreach (var filePath in filePaths)
