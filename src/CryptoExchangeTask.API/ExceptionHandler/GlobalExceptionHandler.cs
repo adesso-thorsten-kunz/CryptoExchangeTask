@@ -25,7 +25,7 @@ public class GlobalExceptionHandler : IExceptionHandler
             Title = "An error occurred while processing your request",
             Detail = exception.Message
         };
-        await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken: cancellationToken);
+        await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
 
         return true;
     }

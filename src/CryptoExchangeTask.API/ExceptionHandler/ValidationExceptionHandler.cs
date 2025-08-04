@@ -24,7 +24,7 @@ public class ValidationExceptionHandler : IExceptionHandler
         }
 
         _logger.LogError(validationException, "Validation failed");
-        
+
         var problemDetails = new ProblemDetails
         {
             Status = StatusCodes.Status400BadRequest,
@@ -32,14 +32,10 @@ public class ValidationExceptionHandler : IExceptionHandler
             Detail = "One or more validation errors occurred.",
             Extensions = new Dictionary<string, object?>
             {
-                ["errors"] = validationException.Errors.Select(e => new
-                {
-                    e.PropertyName,
-                    e.ErrorMessage
-                })
+                ["errors"] = validationException.Errors.Select(e => new { e.PropertyName, e.ErrorMessage })
             }
         };
-        await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken: cancellationToken);
+        await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
 
         return true;
     }
