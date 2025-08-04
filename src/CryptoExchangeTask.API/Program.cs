@@ -1,6 +1,7 @@
 using CryptoExchangeTask.API;
 using CryptoExchangeTask.API.Contracts;
 using CryptoExchangeTask.Business.ExecutionPlan;
+using CryptoExchangeTask.Business.ExecutionPlan.Types;
 using CryptoExchangeTask.Business.Extensions;
 using FluentValidation;
 
@@ -24,6 +25,7 @@ app.MapGet("/execution-plan", async (
         IValidator<ExecutionPlanRequest> validator) =>
     {
         // ToDo: Add Swagger documentation
+
         var validationResult = await validator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
@@ -43,7 +45,7 @@ app.MapGet("/execution-plan", async (
 
         var executionPlan = await executionPlanService.Create(request.Amount, MapOrderType(request.OrderType));
 
-        return Results.Ok(executionPlan);
+        return Results.Ok(MapToResponse(executionPlan));
 
         CryptoExchangeTask.Business.Repository.Types.OrderType MapOrderType(OrderType orderType)
         {
@@ -54,8 +56,21 @@ app.MapGet("/execution-plan", async (
                 _ => throw new ArgumentOutOfRangeException(nameof(orderType), orderType, null)
             };
         }
+
+        ExecutionPlanResponse MapToResponse(ExecutionPlan executionPlan)
+        {
+            return ExecutionPlanResponse.Create(
+                executionPlan.Orders.Select(o => new CryptoExchangeTask.API.Contracts.ExecutionPlanEntry
+                {
+                    Amount = o.Amount,
+                    Price = o.Price,
+                    ExchangeId = o.ExchangeId,
+                    OrderId = o.OrderId
+                }).ToList().AsReadOnly());
+        }
     })
 .WithName("GetExecutionPlan")
 .WithOpenApi();
 
 app.Run();
+
