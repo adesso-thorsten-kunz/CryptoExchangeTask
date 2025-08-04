@@ -9,9 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.18" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CryptoExchangeTask.API.Contracts\CryptoExchangeTask.API.Contracts.csproj" />
+    <ProjectReference Include="..\CryptoExchangeTask.Business\CryptoExchangeTask.Business.csproj" />
   </ItemGroup>
 
 </Project>

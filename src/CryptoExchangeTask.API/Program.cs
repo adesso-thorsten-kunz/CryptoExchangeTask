@@ -1,12 +1,14 @@
+using CryptoExchangeTask.API;
 using CryptoExchangeTask.API.Contracts;
 using CryptoExchangeTask.Business.ExecutionPlan;
 using CryptoExchangeTask.Business.Extensions;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddBusinessServices();
 builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddConsole());
-
+builder.Services.AddValidatorsFromAssemblyContaining<ExecutionPlanRequestValidator>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -16,10 +18,28 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapGet("/execution-plan", async ([AsParameters] ExecutionPlanRequest request, IExecutionPlanService executionPlanService) =>
+app.MapGet("/execution-plan", async (
+        [AsParameters] ExecutionPlanRequest request, 
+        IExecutionPlanService executionPlanService,
+        IValidator<ExecutionPlanRequest> validator) =>
     {
-        if (!Enum.IsDefined(typeof(OrderType), request.OrderType))
-            return Results.BadRequest("Invalid OrderType");
+        // ToDo: Add Swagger documentation
+        var validationResult = await validator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+        {
+            return Results.Problem(
+                title: "Validation failed",
+                detail: "One or more validation errors occurred.",
+                statusCode: 400,
+                extensions: new Dictionary<string, object?>
+                {
+                    ["errors"] = validationResult.Errors.Select(e => new
+                    {
+                        e.PropertyName,
+                        e.ErrorMessage
+                    })
+                });
+        }
 
         var executionPlan = await executionPlanService.Create(request.Amount, MapOrderType(request.OrderType));
 
