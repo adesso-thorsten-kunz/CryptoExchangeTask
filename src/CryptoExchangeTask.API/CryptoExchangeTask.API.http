@@ -1,0 +1,9 @@
+@CryptoExchangeTask.API_HostAddress = http://localhost:5295
+
+GET {{CryptoExchangeTask.API_HostAddress}}/execution-plan?Amount=1&OrderType=Buy
+Accept: application/json
+
+###
+
+GET {{CryptoExchangeTask.API_HostAddress}}/execution-plan?Amount=1&OrderType=Sell
+Accept: application/json
