@@ -8,19 +8,19 @@ internal sealed class BuyerExecutionPlanCalculator : ExecutionPlanCalculatorBase
 {
     protected override decimal GetAvailableFundsForCalculation(
         decimal availableEuro,
-        decimal orderBookEntryPrice) => 
+        decimal orderBookEntryPrice) =>
         availableEuro / orderBookEntryPrice;
 
     protected override decimal ReduceFundsBy(
-        decimal executableOrderAmount, 
-        decimal orderBookEntryPrice) => 
+        decimal executableOrderAmount,
+        decimal orderBookEntryPrice) =>
         executableOrderAmount * orderBookEntryPrice;
 
     protected override IReadOnlyCollection<OrderBookEntry> GetOrderBookEntries(
-        IReadOnlyCollection<Exchange> exchanges) => 
+        IReadOnlyCollection<Exchange> exchanges) =>
         exchanges.GetAllAsksSortedByPrice();
 
     protected override Dictionary<string, decimal> GetAvailableFundsByExchange(
-        IReadOnlyCollection<Exchange> exchanges) => 
+        IReadOnlyCollection<Exchange> exchanges) =>
         exchanges.ToAvailableEuroByExchangeId();
 }

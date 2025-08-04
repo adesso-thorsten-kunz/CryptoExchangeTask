@@ -6,15 +6,9 @@ namespace CryptoExchangeTask.Business.ExecutionPlan.Calculators;
 
 internal abstract class ExecutionPlanCalculatorBase : IExecutionPlanCalculator
 {
-    protected abstract decimal GetAvailableFundsForCalculation(decimal availableFunds, decimal orderBookEntryPrice);
-
-    protected abstract decimal ReduceFundsBy(decimal executableOrderAmount, decimal orderBookEntryPrice);
-
-    protected abstract IReadOnlyCollection<OrderBookEntry> GetOrderBookEntries(IReadOnlyCollection<Exchange> exchanges);
-
-    protected abstract Dictionary<string, decimal> GetAvailableFundsByExchange(IReadOnlyCollection<Exchange> exchanges);
-
-    public IReadOnlyCollection<ExecutionPlanEntry> Calculate(decimal requestedAmount, IReadOnlyCollection<Exchange> exchanges)
+    public IReadOnlyCollection<ExecutionPlanEntry> Calculate(
+        decimal requestedAmount,
+        IReadOnlyCollection<Exchange> exchanges)
     {
         var availableFundsByExchange = GetAvailableFundsByExchange(exchanges);
 
@@ -22,6 +16,14 @@ internal abstract class ExecutionPlanCalculatorBase : IExecutionPlanCalculator
 
         return Calculate(requestedAmount, availableFundsByExchange, orderBookEntries);
     }
+
+    protected abstract decimal GetAvailableFundsForCalculation(decimal availableFunds, decimal orderBookEntryPrice);
+
+    protected abstract decimal ReduceFundsBy(decimal executableOrderAmount, decimal orderBookEntryPrice);
+
+    protected abstract IReadOnlyCollection<OrderBookEntry> GetOrderBookEntries(IReadOnlyCollection<Exchange> exchanges);
+
+    protected abstract Dictionary<string, decimal> GetAvailableFundsByExchange(IReadOnlyCollection<Exchange> exchanges);
 
     private IReadOnlyCollection<ExecutionPlanEntry> Calculate(
         decimal requestedAmount,
@@ -46,7 +48,7 @@ internal abstract class ExecutionPlanCalculatorBase : IExecutionPlanCalculator
             {
                 continue;
             }
-            
+
             var executableOrderAmount = OrderExecutionPlanner.CalculateExecutableOrderAmount(
                 requestedAmount,
                 alreadyPlannedAmount,
@@ -67,7 +69,8 @@ internal abstract class ExecutionPlanCalculatorBase : IExecutionPlanCalculator
             });
 
             alreadyPlannedAmount += executableOrderAmount;
-            availableFundsByExchangeId[orderBookEntry.ExchangeId] -= ReduceFundsBy(executableOrderAmount, orderBookEntry.Price);
+            availableFundsByExchangeId[orderBookEntry.ExchangeId] -=
+                ReduceFundsBy(executableOrderAmount, orderBookEntry.Price);
         }
 
         ThrowIfRequestedAmountNotFulfilled(alreadyPlannedAmount, requestedAmount);
@@ -92,6 +95,8 @@ internal abstract class ExecutionPlanCalculatorBase : IExecutionPlanCalculator
         decimal requestedAmount)
     {
         if (alreadyPlannedAmount < requestedAmount)
+        {
             throw new NotEnoughFundsException();
+        }
     }
 }
