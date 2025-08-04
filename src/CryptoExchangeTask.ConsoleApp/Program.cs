@@ -35,7 +35,7 @@ PrintResult(requestedAmount, orderType, executionPlan);
 
 return;
 
-void PrintResult(decimal requestedAmount1, OrderType orderType1, ExecutionPlan executionPlan1)
+static void PrintResult(decimal requestedAmount1, OrderType orderType1, ExecutionPlan executionPlan1)
 {
     Console.WriteLine();
 

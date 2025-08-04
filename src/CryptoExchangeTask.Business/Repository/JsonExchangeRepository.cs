@@ -20,7 +20,7 @@ internal sealed class JsonExchangeRepository : IExchangeRepository
     public async Task<IReadOnlyCollection<Exchange>> FetchAllExchangesAsync()
     {
         var assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        var filePaths = Directory.GetFiles(Path.Combine(assemblyPath, "Repository", "Data"), "exchange-*.json");
+        var filePaths = Directory.GetFiles(Path.Combine(assemblyPath!, "Repository", "Data"), "exchange-*.json");
 
         var exchanges = new List<Exchange>(filePaths.Length);
         foreach (var filePath in filePaths)
