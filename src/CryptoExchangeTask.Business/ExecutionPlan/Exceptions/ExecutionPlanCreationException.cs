@@ -1,6 +1,6 @@
 ﻿namespace CryptoExchangeTask.Business.ExecutionPlan.Exceptions;
 
-public class ExecutionPlanCreationException : Exception
+internal sealed class ExecutionPlanCreationException : Exception
 {
     public ExecutionPlanCreationException()
         : base("An error occurred while creating the execution plan.")
