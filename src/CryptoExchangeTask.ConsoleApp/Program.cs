@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 var services = new ServiceCollection();
 services.AddLogging(builder => builder.AddConsole());
 services.AddBusinessServices();
-await using var serviceProvider = services.BuildServiceProvider();
 
 OrderType orderType;
 orderType = GetUserInput(
@@ -26,12 +25,25 @@ requestedAmount = GetUserInput(
             (true, requestedAmount) :
             (false, 0));
 
-var executionPlanService = serviceProvider.GetRequiredService<IExecutionPlanService>();
-var executionPlan = await executionPlanService.Create(requestedAmount, orderType);
-
-PrintResult(requestedAmount, orderType, executionPlan);
+try
+{
+    var executionPlan = await CreateExecutionPlan(requestedAmount, orderType, services);
+    PrintResult(requestedAmount, orderType, executionPlan);
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"An error occurred while processing your request. {ex.Message}");
+}
 
 return;
+
+static async Task<ExecutionPlan> CreateExecutionPlan(decimal requestedAmount, OrderType orderType, ServiceCollection services)
+{
+    await using var serviceProvider = services.BuildServiceProvider();
+    var executionPlanService = serviceProvider.GetRequiredService<IExecutionPlanService>();
+    var executionPlan = await executionPlanService.CreateAsync(requestedAmount, orderType);
+    return executionPlan;
+}
 
 static void PrintResult(decimal requestedAmount, OrderType orderType, ExecutionPlan executionPlan)
 {

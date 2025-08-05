@@ -10,6 +10,8 @@ internal abstract class ExecutionPlanCalculatorBase : IExecutionPlanCalculator
         decimal requestedAmount,
         IReadOnlyCollection<Exchange> exchanges)
     {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(requestedAmount, nameof(requestedAmount));
+
         var availableFundsByExchange = GetAvailableFundsByExchange(exchanges);
 
         var orderBookEntries = GetOrderBookEntries(exchanges);
@@ -30,8 +32,6 @@ internal abstract class ExecutionPlanCalculatorBase : IExecutionPlanCalculator
         Dictionary<string, decimal> availableFundsByExchangeId,
         IReadOnlyCollection<OrderBookEntry> orderBookEntries)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(requestedAmount, nameof(requestedAmount));
-
         decimal alreadyPlannedAmount = 0;
 
         List<OrderBookEntry> executionPlanEntries = [];

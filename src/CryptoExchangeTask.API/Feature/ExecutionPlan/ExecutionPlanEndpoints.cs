@@ -14,7 +14,7 @@ public static class ExecutionPlanEndpoints
             {
                 await validator.ValidateAndThrowAsync(request);
 
-                var createdExecutionPlan = await executionPlanService.Create(
+                var createdExecutionPlan = await executionPlanService.CreateAsync(
                     request.Amount,
                     MapOrderType(request.OrderType));
 
