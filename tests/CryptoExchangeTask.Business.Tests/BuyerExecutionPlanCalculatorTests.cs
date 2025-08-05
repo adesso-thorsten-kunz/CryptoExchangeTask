@@ -71,14 +71,13 @@ public class BuyerExecutionPlanCalculatorTests
         var askOneId = Guid.NewGuid();
         var askTwoId = Guid.NewGuid();
         var askThreeId = Guid.NewGuid();
-        var askFourId = Guid.NewGuid();
         var exchanges = new List<Exchange>
         {
             TestDataFactory.CreateExchange("exchange-01", 0, 4000, [
                 TestDataFactory.CreateAsk(askOneId, 0.5m, 1000),
                 TestDataFactory.CreateAsk(askTwoId, 1, 2000),
-                TestDataFactory.CreateAsk(askThreeId, 1, 3000),
-                TestDataFactory.CreateAsk(askFourId, 0.5m, 2100)
+                TestDataFactory.CreateAsk(Guid.NewGuid(), 1, 3000),
+                TestDataFactory.CreateAsk(askThreeId, 0.5m, 2100)
             ], [])
         };
 
@@ -99,7 +98,7 @@ public class BuyerExecutionPlanCalculatorTests
             },
             third =>
             {
-                third.OrderId.Should().Be(askFourId);
+                third.OrderId.Should().Be(askThreeId);
             });
     }
 

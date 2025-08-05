@@ -6,7 +6,7 @@ namespace CryptoExchangeTask.Business.ExecutionPlan.Calculators;
 
 internal abstract class ExecutionPlanCalculatorBase : IExecutionPlanCalculator
 {
-    public IReadOnlyCollection<ExecutionPlanEntry> Calculate(
+    public IReadOnlyCollection<OrderBookEntry> Calculate(
         decimal requestedAmount,
         IReadOnlyCollection<Exchange> exchanges)
     {
@@ -25,7 +25,7 @@ internal abstract class ExecutionPlanCalculatorBase : IExecutionPlanCalculator
 
     protected abstract Dictionary<string, decimal> GetAvailableFundsByExchange(IReadOnlyCollection<Exchange> exchanges);
 
-    private IReadOnlyCollection<ExecutionPlanEntry> Calculate(
+    private IReadOnlyCollection<OrderBookEntry> Calculate(
         decimal requestedAmount,
         Dictionary<string, decimal> availableFundsByExchangeId,
         IReadOnlyCollection<OrderBookEntry> orderBookEntries)
@@ -34,7 +34,7 @@ internal abstract class ExecutionPlanCalculatorBase : IExecutionPlanCalculator
 
         decimal alreadyPlannedAmount = 0;
 
-        List<ExecutionPlanEntry> executionPlanEntries = [];
+        List<OrderBookEntry> executionPlanEntries = [];
 
         foreach (var orderBookEntry in orderBookEntries)
         {
@@ -60,13 +60,7 @@ internal abstract class ExecutionPlanCalculatorBase : IExecutionPlanCalculator
                 continue;
             }
 
-            executionPlanEntries.Add(new ExecutionPlanEntry
-            {
-                ExchangeId = orderBookEntry.ExchangeId,
-                OrderId = orderBookEntry.OrderId,
-                Price = orderBookEntry.Price,
-                Amount = executableOrderAmount
-            });
+            executionPlanEntries.Add(orderBookEntry with { Amount = executableOrderAmount });
 
             alreadyPlannedAmount += executableOrderAmount;
             availableFundsByExchangeId[orderBookEntry.ExchangeId] -=

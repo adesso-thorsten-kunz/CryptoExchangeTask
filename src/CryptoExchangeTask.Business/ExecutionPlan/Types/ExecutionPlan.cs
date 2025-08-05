@@ -5,9 +5,9 @@ public record ExecutionPlan
     public decimal TotalAmount { get; private set; }
     public decimal TotalPrice { get; private set; }
     public int TotalOrders { get; private set; }
-    public IReadOnlyList<ExecutionPlanEntry> Orders { get; private set; } = [];
+    public IReadOnlyList<OrderBookEntry> Orders { get; private set; } = [];
 
-    public static ExecutionPlan Create(IReadOnlyCollection<ExecutionPlanEntry> orders)
+    public static ExecutionPlan Create(IReadOnlyCollection<OrderBookEntry> orders)
     {
         return new ExecutionPlan
         {

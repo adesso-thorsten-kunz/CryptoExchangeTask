@@ -10,8 +10,6 @@ services.AddLogging(builder => builder.AddConsole());
 services.AddBusinessServices();
 await using var serviceProvider = services.BuildServiceProvider();
 
-var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-
 OrderType orderType;
 orderType = GetUserInput(
     "Please enter the order type (buy/sell): ",
@@ -35,24 +33,32 @@ PrintResult(requestedAmount, orderType, executionPlan);
 
 return;
 
-static void PrintResult(decimal requestedAmount1, OrderType orderType1, ExecutionPlan executionPlan1)
+static void PrintResult(decimal requestedAmount, OrderType orderType, ExecutionPlan executionPlan)
 {
     Console.WriteLine();
 
     Console.WriteLine("Execution Plan request:");
-    Console.WriteLine($" - requested amount: '{requestedAmount1}'");
-    Console.WriteLine($" - requested type: '{orderType1}'");
+    Console.WriteLine($"Requested amount: '{requestedAmount}'");
+    Console.WriteLine($"Requested type: '{orderType}'");
 
     Console.WriteLine();
 
     Console.WriteLine("Created execution Plan:");
-    Console.WriteLine($"Total count of orders: '{executionPlan1.TotalOrders}'");
-    Console.WriteLine($"Total price in EUR: '{executionPlan1.TotalPrice}'");
-    Console.WriteLine($"Total amount in crypto: '{executionPlan1.TotalAmount}'");
+    Console.WriteLine($"Total count of orders: '{executionPlan.TotalOrders}'");
+    Console.WriteLine($"Total price in EUR: '{executionPlan.TotalPrice}'");
+    Console.WriteLine($"Total amount in crypto: '{executionPlan.TotalAmount}'");
     Console.WriteLine("Orders:");
-    foreach (var order in executionPlan1.Orders)
+    
+    foreach (var order in executionPlan.Orders)
     {
-        Console.WriteLine($" - Exchange: '{order.ExchangeId}', OrderId: '{order.OrderId}', Price: '{order.Price}', Amount: '{order.Amount}'");
+        Console.WriteLine($"Exchange: '{order.ExchangeId}'");
+        Console.WriteLine($"OrderId: '{order.OrderId}'");
+        Console.WriteLine($"Time: '{order.Time}'");
+        Console.WriteLine($"Type: '{order.Type}'");
+        Console.WriteLine($"Kind: '{order.Kind}'");
+        Console.WriteLine($"Price: '{order.Price}'");
+        Console.WriteLine($"Amount: '{order.Amount}'");
+        Console.WriteLine();
     }
 }
 

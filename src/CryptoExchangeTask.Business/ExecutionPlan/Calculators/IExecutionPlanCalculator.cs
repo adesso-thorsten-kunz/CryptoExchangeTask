@@ -5,5 +5,5 @@ namespace CryptoExchangeTask.Business.ExecutionPlan.Calculators;
 
 public interface IExecutionPlanCalculator
 {
-    IReadOnlyCollection<ExecutionPlanEntry> Calculate(decimal requestedAmount, IReadOnlyCollection<Exchange> exchanges);
+    IReadOnlyCollection<OrderBookEntry> Calculate(decimal requestedAmount, IReadOnlyCollection<Exchange> exchanges);
 }

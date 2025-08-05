@@ -18,12 +18,15 @@ internal static class EnumerableExchangeExtensions
     public static IReadOnlyCollection<OrderBookEntry> GetAllBidsSortedByPrice(this IEnumerable<Exchange> exchanges) =>
         exchanges
             .SelectMany(exchange => exchange.OrderBook.Bids
-                .Select(ask => new OrderBookEntry
+                .Select(bid => new OrderBookEntry
                 {
                     ExchangeId = exchange.Id,
-                    OrderId = ask.Order.Id,
-                    Amount = ask.Order.Amount,
-                    Price = ask.Order.Price
+                    OrderId = bid.Order.Id,
+                    Time = bid.Order.Time,
+                    Type = bid.Order.Type,
+                    Kind = bid.Order.Kind,
+                    Amount = bid.Order.Amount,
+                    Price = bid.Order.Price
                 }))
             .OrderByDescending(candidate => candidate.Price)
             .ToList()
@@ -36,6 +39,9 @@ internal static class EnumerableExchangeExtensions
                 {
                     ExchangeId = exchange.Id,
                     OrderId = ask.Order.Id,
+                    Time = ask.Order.Time,
+                    Type = ask.Order.Type,
+                    Kind = ask.Order.Kind,
                     Amount = ask.Order.Amount,
                     Price = ask.Order.Price
                 }))
