@@ -1,0 +1,6 @@
+services:
+  cryptoexchangetask.api:
+    image: crypto-exchange-task
+    build:
+      context: .
+      dockerfile: src/CryptoExchangeTask.API/Dockerfile
